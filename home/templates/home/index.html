@@ -1,0 +1,348 @@
+<!-- templates/index.html -->
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Classifier</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .cover_card {
+  position: relative;  /* or absolute/fixed if needed */
+  z-index: 9999;
+}
+#waveform {
+  position: relative;
+  z-index: 1;
+}
+
+        body { margin: 1rem; font-family: 'Poppins', sans-serif; }
+        .bnt { display: flex; justify-content: center; }
+        .controls { margin-top: 10px; }
+        .div { display: flex; flex-direction: column; align-items: center; }
+        #waveform-container { width: 100%; display: flex; justify-content: center; }
+        #waveform {
+            width: 90%; height: 30rem; border: 2px solid #333;
+            border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.726);
+            background: rgba(0,0,0,0.842);
+        }
+        .f { display: flex; justify-content: space-evenly; }
+        .txt { text-align: center; }
+        .graph { display: flex; justify-content: center; flex-direction: column; text-align: center; }
+        .mb-3 { text-align: center; width: 40%; position: absolute; bottom: -11rem; z-index: 12; background: #F9F1F0; }
+        .cover_card { display: flex; justify-content: center; }
+        .forms { display: flex; justify-content: space-around; }
+        .check {
+            background: linear-gradient(to right, #F9F1F0, #F8AFA6, #FADCD9);
+            height: 6rem; width: 40%;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid #F79489; border-radius: 11px;
+        }
+        .c_check { display: flex; justify-content: center; }
+        .trim { display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; }
+        #resultCard { display: flex; align-items: center; }
+        .card_result { display: flex; justify-content: center; }
+        .loading-container {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            min-height: 150px;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 5px solid #ccc;
+            border-top: 5px solid #000; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-top: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1050;
+        }
+    </style>
+</head>
+<body>
+    <!-- As a link -->
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <div class="tile">
+        <h1>XGBoost</h1>
+        <p style="padding-left: 4rem;">Voice Classifier</p>
+    </div>
+   
+  </div>
+</nav>
+
+<div id="waveform-container">
+    <div id="waveform">
+        <h5 style="color: white; text-align: center;">VOICE VISUALIZER</h5>
+         <div id="noAudioLabel"
+         style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                color: rgba(255,255,255,0.6); font-size: 2rem; pointer-events: none;">
+        No audio yet
+    </div>
+    </div>
+</div>
+
+<div class="card_result" id="resultCard" style="display: none;">
+    <div class="modal-overlay">
+        <div class="card" id="card_of_result">
+            <div class="loading-container">
+                <h1>Loading...</h1>
+                <div class="spinner"></div>
+            </div>
+            <p style="color: red;">Note: If the audio is too long, it will be trimmed automatically.</p>
+            <p style="color: red;">Note: You can trim the audio manually and choose the duration for prediction.</p>
+        </div>
+    </div>
+</div>
+
+
+
+{% if spectrogram_image %}
+<div class="cover_card">
+    <div class="card mb-3 w-30">
+        <button type="button" class="btn-close" id="closeCardBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5>SPECTROGRAM</h5>
+        <img class="img-fluid" src="/{{ spectrogram_image }}" alt="Spectrogram">
+
+
+
+        <div class="card-body">
+            {% if label %}
+            <div class="pred"><h2>Prediction: {{ confidence }}% {{ label }}</h2></div>
+            {% else %}
+            <div class="pred"><h2>{{ confidence }}% - Input too noisy or unclear.</h2></div>
+            {% endif %}
+        </div>
+        <p style="color: red;">Note: Use clear audio without background noise.</p>
+    </div>
+</div>
+{% endif %}
+
+
+<div class="trim">
+    <button id="playPauseBtn" class="btn btn-secondary">Play</button>
+    <div class="start">
+        <label>Start</label>
+        <input type="number" name="START" placeholder="Start (seconds)">
+    </div>
+    <div class="end">
+        <label>End</label>
+        <input type="number" name="END" placeholder="End (seconds)">
+    </div>
+    <button class="btn btn-primary" id="trimBtn" disabled>Trim</button>
+</div>
+
+<div class="c_check">
+    <div class="check"><h3>Check if Audio is AI or Human Voice</h3></div>
+</div>
+
+<br><br><br>
+
+<div class="forms">
+    <div class="f_forms">
+        <form id="audioForm" action="{% url 'index' %}" method="POST" enctype="multipart/form-data" class="d-flex flex-column gap-2">
+            {% csrf_token %}
+            <input type="file" name="audio_file" id="audioFile">
+            <button type="submit" id="submitBtn" class="btn btn-success">Check Identity</button>
+        </form>
+    </div>
+    <div class="s_forms">
+        <form method="POST" enctype="multipart/form-data" action="{% url 'tiktok_audio_analysis' %}" class="d-flex flex-column gap-2">
+            {% csrf_token %}
+            <input type="text" name="tiktok_url" placeholder="Enter Your Selected URL" required>
+            <button type="submit" class="btn btn-success">Upload Your Link</button>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@6.0.0/dist/wavesurfer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@6.0.0/dist/plugin/wavesurfer.regions.min.js"></script>
+<script>
+const form = document.getElementById('audioForm');
+const card = document.getElementById('resultCard');
+form.addEventListener('submit', () => {
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth' });
+});
+
+document.getElementById("closeCardBtn").addEventListener("click", () => {
+    document.querySelector(".cover_card").style.display = "none";
+});
+
+const noAudioLabel = document.getElementById('noAudioLabel');
+
+const wavesurfer = WaveSurfer.create({
+    container: '#waveform',
+    waveColor: 'white',
+    progressColor: 'purple',
+    height: 450,
+    barWidth: 3,
+    plugins: [
+        WaveSurfer.regions.create({
+            regionsMinLength: 1,
+            dragSelection: true,
+        })
+    ]
+});
+
+function loadFlatline() {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const sampleRate = audioCtx.sampleRate;
+    const duration = 2;
+    const channels = 1;
+
+    const buffer = audioCtx.createBuffer(channels, sampleRate * duration, sampleRate);
+    for (let channel = 0; channel < channels; channel++) {
+        const nowBuffering = buffer.getChannelData(channel);
+        for (let i = 0; i < buffer.length; i++) {
+            nowBuffering[i] = 0;
+        }
+    }
+
+    wavesurfer.loadDecodedBuffer(buffer);
+    if (noAudioLabel) noAudioLabel.style.display = 'block';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadFlatline();
+});
+
+document.getElementById('audioFile').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) {
+        wavesurfer.empty();
+        const url = URL.createObjectURL(file);
+        wavesurfer.load(url);
+        if (noAudioLabel) noAudioLabel.style.display = 'none';
+    }
+});
+
+wavesurfer.on('ready', () => {
+    document.getElementById('trimBtn').disabled = false;
+    const duration = wavesurfer.getDuration();
+    wavesurfer.clearRegions();
+    const region = wavesurfer.addRegion({
+        start: 0,
+        end: Math.min(2, duration),
+        color: 'rgba(0,123,255,0.3)'
+    });
+    updateRegionInputs(region);
+});
+
+let isPlaying = false;
+document.getElementById('playPauseBtn').addEventListener('click', () => {
+    if (isPlaying) {
+        wavesurfer.pause();
+        document.getElementById('playPauseBtn').textContent = 'Play';
+    } else {
+        wavesurfer.play();
+        document.getElementById('playPauseBtn').textContent = 'Pause';
+    }
+    isPlaying = !isPlaying;
+});
+
+wavesurfer.on('finish', () => {
+    document.getElementById('playPauseBtn').textContent = 'Play';
+    isPlaying = false;
+});
+
+wavesurfer.on('region-created', updateRegionInputs);
+wavesurfer.on('region-updated', updateRegionInputs);
+
+function updateRegionInputs(region) {
+    document.querySelector('input[name="START"]').value = region.start.toFixed(2);
+    document.querySelector('input[name="END"]').value = region.end.toFixed(2);
+}
+
+document.getElementById('trimBtn').addEventListener('click', async () => {
+    const start = parseFloat(document.querySelector('input[name="START"]').value);
+    const end = parseFloat(document.querySelector('input[name="END"]').value);
+
+    if (isNaN(start) || isNaN(end) || start >= end) {
+        return alert("Invalid start/end times.");
+    }
+
+    if (!wavesurfer.isReady) {
+        return alert("Audio not loaded yet.");
+    }
+
+    const buffer = wavesurfer.backend.buffer;
+    const sampleRate = buffer.sampleRate;
+    const startSample = Math.floor(start * sampleRate);
+    const endSample = Math.floor(end * sampleRate);
+    const trimmedLength = endSample - startSample;
+    const trimmedBuffer = wavesurfer.backend.ac.createBuffer(
+        buffer.numberOfChannels,
+        trimmedLength,
+        sampleRate
+    );
+
+    for (let c = 0; c < buffer.numberOfChannels; c++) {
+        const channelData = buffer.getChannelData(c).slice(startSample, endSample);
+        trimmedBuffer.copyToChannel(channelData, c);
+    }
+
+    const blob = encodeWAV(trimmedBuffer);
+    const url = URL.createObjectURL(blob);
+    wavesurfer.load(url);
+
+    const trimmedFile = new File([blob], 'trimmed.wav', { type: 'audio/wav' });
+    const dt = new DataTransfer();
+    dt.items.add(trimmedFile);
+    document.getElementById('audioFile').files = dt.files;
+
+    document.getElementById('playPauseBtn').textContent = 'Play';
+    alert('Trimmed audio ready!');
+});
+
+function encodeWAV(audioBuffer) {
+    const numChannels = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate;
+    const samples = audioBuffer.length;
+    const buffer = new ArrayBuffer(44 + samples * numChannels * 2);
+    const view = new DataView(buffer);
+
+    writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + samples * numChannels * 2, true);
+    writeString(view, 8, 'WAVE');
+    writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * numChannels * 2, true);
+    view.setUint16(32, numChannels * 2, true);
+    view.setUint16(34, 16, true);
+    writeString(view, 36, 'data');
+    view.setUint32(40, samples * numChannels * 2, true);
+
+    let offset = 44;
+    for (let i = 0; i < samples; i++) {
+        for (let c = 0; c < numChannels; c++) {
+            let sample = audioBuffer.getChannelData(c)[i];
+            sample = Math.max(-1, Math.min(1, sample));
+            view.setInt16(offset, sample * 0x7FFF, true);
+            offset += 2;
+        }
+    }
+
+    return new Blob([view], { type: 'audio/wav' });
+}
+
+function writeString(view, offset, str) {
+    for (let i = 0; i < str.length; i++) {
+        view.setUint8(offset + i, str.charCodeAt(i));
+    }
+}
+</script>
+
+
+</body>
+</html>

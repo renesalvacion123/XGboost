@@ -1,0 +1,13 @@
+# Ignore all datasets and model weights
+*.wav
+*.mp3
+*.pkl
+*.h5
+*.pt
+*.onnx
+*.zip
+*.tar.gz
+/media/
+/archive/
+__pycache__/
+*.sqlite3

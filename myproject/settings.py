@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-g@lx!v0atzs=zm0i34rz4+(ju2*#m#f1+3g%a1cg1aci384%94
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+
 
 
 
@@ -42,9 +42,12 @@ ARCHIVE_PATH = os.path.join(BASE_DIR, 'archive')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Optional if you want auto-discovery
 
-CSRF_TRUSTED_ORIGINS = ['https://xgboost-3.onrender.com']
+CSRF_TRUSTED_ORIGINS = [
+    'https://xgboost-nnct.onrender.com'
+]
 
 
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [

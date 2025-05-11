@@ -5,40 +5,36 @@ import soundfile as sf
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from . import utils
-
+import psutil
 # Constants
 UPLOAD_DIR = 'home/uploaded_audio/'
 MAX_AUDIO_DURATION = 120  # 2 minutes
-
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
 MODEL_PATH = os.path.join(PROJECT_ROOT, 'FINAL_XGB_MODEL.joblib')
 
+# Load the model once globally
 try:
     model = joblib.load(MODEL_PATH)
+    print("Model loaded successfully.")
 except Exception as e:
     print("Error loading model:", e)
     model = None
-    
 
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# Load the model once
-def load_model():
-    try:
-        model = joblib.load(MODEL_PATH)
-        print("Model loaded successfully.")
-        return model
-    except Exception as e:
-        print(f"Error loading model: {e}")
-        return None
 
+
+
+def print_memory_usage(tag=""):
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info().rss / (1024 * 1024)  # in MB
+    print(f"[{tag}] Memory usage: {mem:.2f} MB")
 
 # View for file upload and classification
 def index(request):
-    model = load_model()
     label = None
     confidence = None
     spectrogram_image = None
@@ -61,7 +57,9 @@ def index(request):
                 })
 
             # Load and trim if needed
-            y, sr = librosa.load(full_file_path, sr=None)
+            print_memory_usage("Before loading audio")
+            y, sr = librosa.load(full_file_path, sr=16000)
+            print_memory_usage("After loading audio")
             print(f"Audio loaded: {y.shape}, Sample rate: {sr}")
             duration = librosa.get_duration(y=y, sr=sr)
             print(f"Audio duration: {duration} seconds")
@@ -90,11 +88,12 @@ def index(request):
             utils.save_spectrogram(trimmed_audio_path, spectrogram_path)
             spectrogram_image = spectrogram_path
 
+            # After saving spectrogram
+            print_memory_usage("After spectrogram generation")
 
             # Classify using model
             if model:
                 label, confidence = utils.classify_voice(trimmed_audio_path, model)
-                print(f"Model loaded: {model is not None}")
                 print(f"Label: {label}, Confidence: {confidence}")
 
                 if label == 1:
@@ -111,10 +110,11 @@ def index(request):
             print(f"Error loading audio: {e}")
             label = "Error loading audio"
             confidence = 0
-
-        # Cleanup
-        os.remove(full_file_path)
-        os.remove(trimmed_audio_path)
+        finally:
+            if os.path.exists(full_file_path):
+                os.remove(full_file_path)
+            if 'trimmed_audio_path' in locals() and os.path.exists(trimmed_audio_path):
+                os.remove(trimmed_audio_path)
 
     return render(request, 'home/index.html', {
         'label': label,
@@ -123,9 +123,8 @@ def index(request):
         'prediction': label is not None and label not in ["Error", "Error loading audio"]
     })
 
+
 def tiktok_audio_analysis(request):
-    model = load_model()
-    print(f"Model loaded: {model}")  # Debug print
     label = None
     confidence = None
     spectrogram_image = None
@@ -134,14 +133,12 @@ def tiktok_audio_analysis(request):
         tiktok_url = request.POST.get('tiktok_url')
         if tiktok_url:
             wav_file = utils.tiktok_to_wav(tiktok_url)
-            
-            # Check if the WAV file exists
+
             if wav_file and os.path.exists(wav_file):
                 try:
                     print(f"Audio file {wav_file} exists and is valid.")
 
-                    # Load and trim the audio file
-                    y, sr = librosa.load(wav_file, sr=None)
+                    y, sr = librosa.load(wav_file, sr=16000, mono=True)
                     print(f"Audio loaded: {y.shape}, Sample rate: {sr}")
                     duration = librosa.get_duration(y=y, sr=sr)
                     print(f"Audio duration: {duration} seconds")
@@ -155,34 +152,28 @@ def tiktok_audio_analysis(request):
                             'prediction': False
                         })
 
-                    # Trim the audio if it exceeds the max duration
                     if duration > MAX_AUDIO_DURATION:
                         y = y[:sr * MAX_AUDIO_DURATION]
 
-                    # Save the trimmed audio
                     trimmed_audio_path = f'{UPLOAD_DIR}trimmed_{os.path.basename(wav_file)}'
                     sf.write(trimmed_audio_path, y, sr)
 
-                    # Clean old spectrograms
                     utils.clean_old_spectrograms('static/spectrograms')
 
-                    # Generate and save spectrogram
                     filename = os.path.basename(wav_file).replace('.wav', '')
                     spectrogram_path = f'static/spectrograms/tiktok_{filename}.png'
-
                     utils.save_spectrogram(trimmed_audio_path, spectrogram_path)
                     spectrogram_image = spectrogram_path
 
-
-                    # Classify using the model
                     if model:
-                        print(f"Classifying audio with model: {model}")  # Debug print
                         label, confidence = utils.classify_voice(trimmed_audio_path, model)
-                        print(f"Prediction: {label}, Confidence: {confidence}")  # Debug print
+                        print(f"Prediction: {label}, Confidence: {confidence}")
                         if label == 1:
                             label = "FAKE"
                         elif label == 0:
                             label = "REAL"
+                        else:
+                            label = "Unknown"
                     else:
                         label = "Error"
                         confidence = 0
@@ -192,7 +183,8 @@ def tiktok_audio_analysis(request):
                     label = "Error processing audio"
                     confidence = 0
                 finally:
-                    os.remove(trimmed_audio_path)
+                    if 'trimmed_audio_path' in locals() and os.path.exists(trimmed_audio_path):
+                        os.remove(trimmed_audio_path)
 
     return render(request, 'home/index.html', {
         'label': label,

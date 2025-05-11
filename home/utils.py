@@ -86,7 +86,7 @@ def save_spectrogram(audio_path, spectrogram_path):
 
     os.makedirs(os.path.dirname(spectrogram_path), exist_ok=True)
     plt.savefig(spectrogram_path)
-    plt.close()
+    plt.close('all')
 
     print("Saved spectrogram to:", spectrogram_path)
 

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-g@lx!v0atzs=zm0i34rz4+(ju2*#m#f1+3g%a1cg1aci384%94'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 
@@ -46,7 +46,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://xgboost-nnct.onrender.com'
 ]
 
-ALLOWED_HOSTS = ['xgboost-nnct.onrender.com']
+ALLOWED_HOSTS = ['xgboost-nnct.onrender.com', '127.0.0.1', 'localhost']
 
 # Application definition
 

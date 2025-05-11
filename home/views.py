@@ -9,7 +9,18 @@ from . import utils
 # Constants
 UPLOAD_DIR = 'home/uploaded_audio/'
 MAX_AUDIO_DURATION = 120  # 2 minutes
-MODEL_PATH = r"FINAL_XGB_MODEL.joblib"  # Use the correct trained model
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+MODEL_PATH = os.path.join(PROJECT_ROOT, 'FINAL_XGB_MODEL.joblib')
+
+try:
+    model = joblib.load(MODEL_PATH)
+except Exception as e:
+    print("Error loading model:", e)
+    model = None
+    
 
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_DIR, exist_ok=True)

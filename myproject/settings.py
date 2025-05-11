@@ -42,6 +42,9 @@ ARCHIVE_PATH = os.path.join(BASE_DIR, 'archive')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Optional if you want auto-discovery
 
+CSRF_TRUSTED_ORIGINS = ['https://xgboost-3.onrender.com']
+
+
 # Application definition
 
 INSTALLED_APPS = [

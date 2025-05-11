@@ -9,7 +9,7 @@ from . import utils
 # Constants
 UPLOAD_DIR = 'home/uploaded_audio/'
 MAX_AUDIO_DURATION = 120  # 2 minutes
-MODEL_PATH = r"D:\Documents\FINAL_XGB_MODEL.joblib"  # Use the correct trained model
+MODEL_PATH = r"FINAL_XGB_MODEL.joblib"  # Use the correct trained model
 
 # Ensure the upload directory exists
 os.makedirs(UPLOAD_DIR, exist_ok=True)

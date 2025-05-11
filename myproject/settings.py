@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-g@lx!v0atzs=zm0i34rz4+(ju2*#m#f1+3g%a1cg1aci384%94
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['xgboost-3.onrender.com']
+ALLOWED_HOSTS = ['*']
+
 
 
 # settings.py

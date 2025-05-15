@@ -1,4 +1,3 @@
-<!-- templates/index.html -->
 {% load static %}
 
 <!DOCTYPE html>
@@ -6,89 +5,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Classifier</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        .cover_card {
-  position: relative;  /* or absolute/fixed if needed */
-  z-index: 9999;
-}
-#waveform {
-  position: relative;
-  z-index: 1;
-}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        body { margin: 1rem; font-family: 'Poppins', sans-serif; }
-        .bnt { display: flex; justify-content: center; }
-        .controls { margin-top: 10px; }
-        .div { display: flex; flex-direction: column; align-items: center; }
-        #waveform-container { width: 100%; display: flex; justify-content: center; }
-        #waveform {
-            width: 90%; height: 30rem; border: 2px solid #333;
-            border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.726);
-            background: rgba(0,0,0,0.842);
-        }
-        .f { display: flex; justify-content: space-evenly; }
-        .txt { text-align: center; }
-        .graph { display: flex; justify-content: center; flex-direction: column; text-align: center; }
-        .mb-3 { text-align: center; width: 40%; position: absolute; bottom: -11rem; z-index: 12; background: #F9F1F0; }
-        .cover_card { display: flex; justify-content: center; }
-        .forms { display: flex; justify-content: space-around; }
-        .check {
-            background: linear-gradient(to right, #F9F1F0, #F8AFA6, #FADCD9);
-            height: 6rem; width: 40%;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid #F79489; border-radius: 11px;
-        }
-        .c_check { display: flex; justify-content: center; }
-        .trim { display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; }
-        #resultCard { display: flex; align-items: center; }
-        .card_result { display: flex; justify-content: center; }
-        .loading-container {
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            min-height: 150px;
-        }
-        .spinner {
-            width: 40px; height: 40px; border: 5px solid #ccc;
-            border-top: 5px solid #000; border-radius: 50%;
-            animation: spin 1s linear infinite; margin-top: 10px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .modal-overlay {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1050;
-        }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <title>Document</title>
 </head>
+<style>
+    
+
+</style>
 <body>
-    <!-- As a link -->
-<nav class="navbar navbar-light bg-light">
-  <div class="container-fluid">
-    <div class="tile">
-        <h1>XGBoost</h1>
-        <p style="padding-left: 4rem;">Voice Classifier</p>
-    </div>
-   
-  </div>
-</nav>
 
-<div id="waveform-container">
-    <div id="waveform">
-        <h5 style="color: white; text-align: center;">VOICE VISUALIZER</h5>
-         <div id="noAudioLabel"
-         style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                color: rgba(255,255,255,0.6); font-size: 2rem; pointer-events: none;">
-        No audio yet
-    </div>
-    </div>
-</div>
-
-<div class="card_result" id="resultCard" style="display: none;">
+    <div class="card_result" id="resultCard" style="display: none;">
     <div class="modal-overlay">
         <div class="card" id="card_of_result">
             <div class="loading-container">
@@ -103,85 +37,309 @@
 
 
 
-{% if spectrogram_image %}
-<div class="cover_card">
-    <div class="card mb-3 w-30">
-        <button type="button" class="btn-close" id="closeCardBtn" data-bs-dismiss="modal" aria-label="Close"></button>
-        <h5>SPECTROGRAM</h5>
-        <img class="img-fluid" src="/{{ spectrogram_image }}" alt="Spectrogram">
 
-
-
-        <div class="card-body">
-            {% if label %}
-            <div class="pred"><h2>Prediction: {{ confidence }}% {{ label }}</h2></div>
-            {% else %}
-            <div class="pred"><h2>{{ confidence }}% - Input too noisy or unclear.</h2></div>
-            {% endif %}
+    <div class="nav navbar-expand-lg navbar-light bg-light">
+        <div class="logo" style="padding-left: 1rem;">
+            <span class="material-symbols-outlined">mic</span>
+            <a> VoiceVerify</a>
         </div>
-        <p style="color: red;">Note: Use clear audio without background noise.</p>
+        
+        <div class="ul" style="padding-right: 3rem;">
+            <ul>
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">How it Works?</a></li>
+                
+            </ul>
+        </div>
     </div>
-</div>
+
+ 
+    
+
+    <div class="voice_txt">
+        <h1>AI VOICE DETECTION</h1>
+        <p>Upload an audio file and trim the waveform to select which part to analyze. Our <br> advanced algorithm detects subtle patterns that distinguish synthetic voices from human <br>ones.</p>
+    </div>
+
+    <br>
+
+    <div class="card_of_waveform">
+        <div class="card card_waveform">
+            <div class="card-body">
+                <div class="up">
+                    <h3>Audio Waveform</h3>
+                    <div class="sel">
+                        
+                        
+                        <h5  id="total-time">Total: 0:00</h5>
+                    </div>
+                    
+                </div>
+                <div id="waveform">
+
+                </div>
+                <br>
+                <br>
+                    <div class="btn btn_first">
+                        <div class="playB">
+                           <button type="button" id="playPauseBtn">
+                            <span class="material-symbols-outlined">play_circle</span>Play Selection</button>
+
+                        </div>
+                    <div class="trim_input">
+                        <div class="start">
+                            <label>Start</label>
+                            <input type="number" name="START" placeholder="Start (seconds)">
+                        </div>
+                        <div class="end">
+                            <label>End</label>
+                            <input type="number" name="END" placeholder="End (seconds)">
+                        </div>
+
+                        <div class="trim_it">
+                            <button class="" id="trimBtn" disabled><span class="material-symbols-outlined">content_cut</span>Trim</button>
+                            
+                        </div>
+                    </div>
+                    </div>
+
+
+                    <div class="option_check">
+                        <div class="btn_option">
+                            <button id="btnUploadAudio">Upload Audio File</button>
+                            <button id="btnUploadLink">Upload Link from Social Media</button>
+                        </div>
+                        <br>
+                        
+                        <div class="option_cards">
+                                    <div class="audio_output" id="audioSection">
+                                    
+                                        <div class="input_audio">
+                                            <form id="audioForm" action="{% url 'index' %}" method="POST" enctype="multipart/form-data">
+                                                <!-- Upload Area -->
+                                                <!-- Label acting as upload box -->
+                                                <label for="audioFile" class="upload-box">
+                                                <span class="material-symbols-outlined upload-icon" id="uploadIcon">cloud_upload</span>
+
+                                                <!-- This section will be dynamically replaced -->
+                                            <div class="upload-text" id="uploadText">
+                                                <div><strong>Drag & drop audio file</strong></div>
+                                                <div>or click to browse</div>
+                                                <div class="support-text">Supports MP3, WAV, M4A (Max 10MB)</div>
+                                            </div>
+                                            {% csrf_token %}
+                                                <input type="file" name="audio_file" id="audioFile" accept=".mp3,.wav,.m4a">
+                                                </label>
+                                            
+                                            
+                                        </div>
+                                        <div class="btn_analyze">
+                                            <button type="submit"  class="btn btn-primary"><span class="material-symbols-outlined">content_paste_search</span>Analyze Selected Audio</button>
+                                        </div>
+                                        </form>
+                                    </div>
+
+
+                                    <div class="link_cards" id="linkSection">
+                                        <div class="s_forms">
+                                            <h1>You Can Upload Link On Every Social Media That you want</h1>
+                                            <div class="social_logo">
+                                                <!-- Add font awesome icons -->
+                                                <p class="fab fa-facebook"></p>
+                                                <p class="fab fa-instagram"></p>
+                                                <p class="fab fa-youtube"></p>
+                                                <!-- TikTok Icon -->
+                                                <p class="fab fa-tiktok tiktok-icon"></p>
+                                            </div>
+                                            <form method="POST" enctype="multipart/form-data" action="{% url 'tiktok_audio_analysis' %}" class="d-flex flex-column gap-2" id="linkform">
+                                                {% csrf_token %}
+                                                <input type="text" name="tiktok_url" placeholder="Enter Your Selected URL" required>
+                                                <button type="submit" class="btn btn-success">Upload Your Link</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                        </div>
+                    </div>
+                    
+
+                    
+
+            </div>
+        </div>
+    </div>
+
+    
+
+    <br>
+    <br>
+
+    <div class="analysis_result">
+        <h3 style="padding-left: 3rem;" id="text_results">Analysis Results</h3>
+
+        <div class="card_of_results">
+            <div class="card card_percentage">
+                <div class="voice_class">
+                    <h1>Voice Classification</h1>
+                    <h5>Overall analysis result</h5>
+                </div>
+                <div class="percent_logo">
+                    <div class="circle-chart">
+                        <svg viewBox="0 0 36 36" class="circular-chart blue">
+                            <path class="circle-bg"
+                                d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle"
+                                stroke-dasharray="{{ confidence }}, 100"
+                                d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <text x="18" y="20.35" class="percentage">{{ confidence }}%</text>
+                        </svg>
+                    </div>
+
+                </div>
+                  <div class="card-body">
+                    <!-- DEBUG: Display what 'label' is -->
+                    <img class="img-fluid" src="/{{ spectrogram_image }}" alt="Spectrogram">
+                    
+
+                    {% if label == "FAKE" %}
+
+                    <div class="card card_ai">
+                        
+                        <div class="icon">
+                            <span class="material-symbols-outlined">smart_toy</span>
+                        </div>
+                        <div class="text_confi">
+                            <h5>AI-Generated Voice</h5>
+                            <p>{{ confidence }}% confidence level</p>
+                        </div>
+                    </div>
+                    {% elif label == "REAL" %}
+                      <div class="card card_human">
+                        <div class="icon">
+                            <span class="material-symbols-outlined">record_voice_over</span>
+                        </div>
+                        <div class="text_confi">
+                            <h5>Human-Generated Voice</h5>
+                            <p>{{ confidence }}% confidence level</p>
+                        </div>
+                        </div>
+                        {% endif %}
+                </div>
+            
+
+            </div>
+
+            <div class="card card_metrics">
+                <h3 style="text-align: center;">Confidence Level</h3>
+                {% if label == "FAKE" %}
+                <dl class="confidence-explainer">
+                    <dt><strong>Confidence Level: 90–100%</strong></dt>
+                    <dd>This voice is very likely AI-generated. Be cautious — it may be used for impersonation, scams or misinformation.</dd>
+
+                    <dt><strong>Confidence Level: 70–89%</strong></dt>
+                    <dd>This voice likely contains AI-generated elements. Please verify the source before trusting or sharing.</dd>
+
+                    <dt><strong>Confidence Level: 50–69%</strong></dt>
+                    <dd>The voice may be AI-generated, but confidence is low. Use discretion and check the source if possible.</dd>
+
+                    <dt><strong>Confidence Level: Below 50%</strong></dt>
+                    <dd>This voice appears to be human. However, always stay alert to possible manipulations or edits.</dd>
+                </dl>
+                {% elif label == "REAL" %}
+                <dl class="confidence-explainer">
+  <dt><strong>Confidence Level: 90–100%</strong></dt>
+  <dd>This voice is very likely human. Minimal signs of AI generation detected.</dd>
+
+  <dt><strong>Confidence Level: 70–89%</strong></dt>
+  <dd>This voice is likely human. However, a small chance of AI involvement still exists.</dd>
+
+  <dt><strong>Confidence Level: 50–69%</strong></dt>
+  <dd>This voice might be human, but confidence is moderate. Consider verifying the source.</dd>
+
+  <dt><strong>Confidence Level: Below 50%</strong></dt>
+  <dd>This voice may contain AI-generated elements. Stay cautious and validate authenticity if needed.</dd>
+</dl>
+
 {% endif %}
+            </div>
+        </div>
 
-
-<div class="trim">
-    <button id="playPauseBtn" class="btn btn-secondary">Play</button>
-    <div class="start">
-        <label>Start</label>
-        <input type="number" name="START" placeholder="Start (seconds)">
+        
     </div>
-    <div class="end">
-        <label>End</label>
-        <input type="number" name="END" placeholder="End (seconds)">
-    </div>
-    <button class="btn btn-primary" id="trimBtn" disabled>Trim</button>
-</div>
 
-<div class="c_check">
-    <div class="check"><h3>Check if Audio is AI or Human Voice</h3></div>
-</div>
 
-<br><br><br>
+    <br>
+    <br>
 
-<div class="forms">
-    <div class="f_forms">
-        <form id="audioForm" action="{% url 'index' %}" method="POST" enctype="multipart/form-data" class="d-flex flex-column gap-2">
-            {% csrf_token %}
-            <input type="file" name="audio_file" id="audioFile">
-            <button type="submit" id="submitBtn" class="btn btn-success">Check Identity</button>
-        </form>
-    </div>
-    <div class="s_forms">
-        <form method="POST" enctype="multipart/form-data" action="{% url 'tiktok_audio_analysis' %}" class="d-flex flex-column gap-2">
-            {% csrf_token %}
-            <input type="text" name="tiktok_url" placeholder="Enter Your Selected URL" required>
-            <button type="submit" class="btn btn-success">Upload Your Link</button>
-        </form>
-    </div>
-</div>
+    <footer>
+        <div class="footer_txt">
+            <div class="f1">
+                <span class="material-symbols-outlined">mic</span>
+                <a> VoiceVerify</a>
+                <p>Detect AI-generated voices with confidence</p>
+            </div>
+            
+        </div>
+        <p style="color: white; text-align: center;">© 2023 VoiceVerify. All rights reserved. </p>
+    </footer>
 
-<!-- Scripts -->
+    <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@6.0.0/dist/wavesurfer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@6.0.0/dist/plugin/wavesurfer.regions.min.js"></script>
 <script>
-const form = document.getElementById('audioForm');
-const card = document.getElementById('resultCard');
-form.addEventListener('submit', () => {
-    card.style.display = 'block';
-    card.scrollIntoView({ behavior: 'smooth' });
+
+   const btnAudio = document.getElementById('btnUploadAudio');
+const btnLink = document.getElementById('btnUploadLink');
+const audioSection = document.getElementById('audioSection');
+const linkSection = document.getElementById('linkSection');
+
+function updateButtonStyles(activeButton, inactiveButton) {
+    activeButton.classList.add('red-background');
+    inactiveButton.classList.remove('red-background');
+}
+
+// Show audio section by default
+audioSection.style.display = 'block';
+linkSection.style.display = 'none';
+updateButtonStyles(btnAudio, btnLink); // highlight btnAudio initially
+
+btnAudio.addEventListener('click', () => {
+    audioSection.style.display = 'block';
+    linkSection.style.display = 'none';
+    updateButtonStyles(btnAudio, btnLink);
 });
 
-document.getElementById("closeCardBtn").addEventListener("click", () => {
-    document.querySelector(".cover_card").style.display = "none";
+btnLink.addEventListener('click', () => {
+    audioSection.style.display = 'none';
+    linkSection.style.display = 'block';
+    updateButtonStyles(btnLink, btnAudio);
 });
 
-const noAudioLabel = document.getElementById('noAudioLabel');
+
+// Form 1 — audioForm
+const form1 = document.getElementById('audioForm');
+const card1 = document.getElementById('resultCard');
+
+form1.addEventListener('submit', () => {
+    card1.style.display = 'block';
+    card1.scrollIntoView({ behavior: 'smooth' });
+});
+
+// Form 2 — linkform
+const form2 = document.getElementById('linkform');
+// Reuse same resultCard (assuming both forms show same result)
+form2.addEventListener('submit', () => {
+    card1.style.display = 'block';
+    card1.scrollIntoView({ behavior: 'smooth' });
+}); 
 
 const wavesurfer = WaveSurfer.create({
     container: '#waveform',
-    waveColor: 'white',
-    progressColor: 'purple',
+    waveColor: 'gray',
+    progressColor: '#6FE6FC',
     height: 450,
     barWidth: 3,
     plugins: [
@@ -195,7 +353,7 @@ const wavesurfer = WaveSurfer.create({
 function loadFlatline() {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const sampleRate = audioCtx.sampleRate;
-    const duration = 2;
+    const duration = 0;
     const channels = 1;
 
     const buffer = audioCtx.createBuffer(channels, sampleRate * duration, sampleRate);
@@ -214,19 +372,52 @@ window.addEventListener('DOMContentLoaded', () => {
     loadFlatline();
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+  const audioInput = document.getElementById("audioFile");
+  const uploadText = document.getElementById("uploadText");
+
+  audioInput.addEventListener("change", function () {
+    if (audioInput.files.length > 0) {
+      const fileName = audioInput.files[0].name;
+      uploadText.innerHTML = `
+        <div class="file-name">${fileName}</div>
+        <div class="success-message">File uploaded successfully</div>
+      `;
+    }
+  });
+});
+
+
 document.getElementById('audioFile').addEventListener('change', e => {
     const file = e.target.files[0];
+    console.log("not Icon updated");
+    console.log("Selected file:", file); // Debug line
     if (file) {
         wavesurfer.empty();
         const url = URL.createObjectURL(file);
+        console.log("Loading into wavesurfer:", url); // Debug line
         wavesurfer.load(url);
+          const icon = document.getElementById('uploadIcon');
+        icon.textContent = 'check_circle';
+        icon.style.color = '#28a745';
+        console.log("Icon updated:", icon.textContent, icon.style.color);
         if (noAudioLabel) noAudioLabel.style.display = 'none';
+
+      
     }
 });
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
 
 wavesurfer.on('ready', () => {
     document.getElementById('trimBtn').disabled = false;
     const duration = wavesurfer.getDuration();
+    document.getElementById('total-time').textContent = `Total: ${formatTime(duration)}`;
     wavesurfer.clearRegions();
     const region = wavesurfer.addRegion({
         start: 0,
@@ -342,7 +533,5 @@ function writeString(view, offset, str) {
     }
 }
 </script>
-
-
 </body>
 </html>

@@ -1,0 +1,602 @@
+body{
+        width: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 150vh;
+      background: linear-gradient(to right, #eaf1ff , #e3ebff );
+
+    }
+.nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4rem;
+    
+    
+}
+  .nav ul {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem; /* spacing between list items */
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+li{
+    align-items: center;
+    display: flex;
+}
+
+.voice_txt{
+    text-align: center;
+}
+
+.nav ul li a{
+    text-decoration: none;
+}
+
+.sel{
+    display: flex;
+    gap: .4rem;
+}
+.up{
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-boy{
+    display: flex;
+    flex-direction: column;
+}
+
+.btn{
+    display: flex;
+    justify-content: space-between;
+}
+.trim_input{
+    display: flex;
+    gap: 1rem;
+}
+#waveform{
+    border: 2px solid #4ED7F1;
+    border-radius: 8px;
+    background: #d8e4f0;
+}
+
+.card_waveform{
+    min-width: 70%;
+}
+
+.card_of_waveform{
+    display: flex;
+    justify-content: center;
+}
+
+.audio_output {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;      /* centers horizontally */
+}
+
+
+.upload-box {
+  border: 2px dashed #a3c2f5;
+  background-color: #f5faff;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 80rem;
+  min-width: 50%;
+  margin: auto;
+}
+.upload-box:hover {
+  background-color: #eaf4ff;
+}
+.upload-icon {
+  font-size: 40px;
+  color: #3f8efc;
+  margin-bottom: 10px;
+}
+.upload-box input[type="file"] {
+  display: none;
+}
+.support-text {
+  font-size: 12px;
+  color: #999;
+  margin-top: 10px;
+}
+
+footer{
+    background: rgba(0, 0, 0, 0.897);
+    color:  white;
+}
+.footer_txt{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 9rem;
+}
+.f1{
+    padding-left: 2rem;
+}
+.f2{
+    
+    display: flex;
+    
+}
+
+.f2 ul{
+    
+    display: flex;
+    gap: 2rem;
+    padding-right: 2rem;
+}
+.f2 ul li a{
+    color: white;
+    text-decoration: none;
+}
+
+
+
+
+
+
+
+
+
+.circle-chart {
+  max-width: 80px;
+  margin: auto;
+}
+
+.circular-chart {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke: #007bff; /* Blue */
+  animation: progress 1s ease-out forwards;
+}
+
+.percentage {
+  fill: #333;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.5em;
+  text-anchor: middle;
+  padding: 1rem 1.5rem;
+  
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0, 100;
+  }
+}
+
+.card_of_results{
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    
+}
+
+
+.card_percentage{
+    width: 12rem;
+    min-width: 30%;
+    padding: 1rem 1.5rem;
+    
+}
+
+
+.card.card_metrics {
+  padding: 1rem;
+  width: 31rem;
+  height: 25rem;
+}
+
+
+.detailed_metrics {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+   width: 12rem;
+    min-width: 30%;
+  
+}
+
+.metric-row {
+  margin-top: 1rem;
+}
+
+.metric-row span {
+  display: inline-block;
+  font-size: 14px;
+  color: #333;
+  width: 50%;
+}
+
+.metric-row span:last-child {
+  text-align: right;
+}
+
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: #e5e5e5;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: var(--percent);
+  left: 0;
+  top: 0;
+  border-radius: 6px;
+}
+
+.bg-green::before {
+  background-color: #3ecf8e;
+}
+
+.bg-red::before {
+  background-color: #f44336;
+}
+
+.bg-yellow::before {
+  background-color: #f7b500;
+}
+
+
+button{
+    border: none;
+    width: 12rem;
+    padding: .3rem;
+    border-radius: 5px;
+}
+
+#playPauseBtn{
+    background: #e3ebff ;
+}
+#playPauseBtn:hover{
+    background: rgb(214, 214, 245);
+    transition:.4s;
+}
+
+#trimBtn{
+    background: #e3ebff ;
+}
+#trimBtn:hover{
+    background: rgb(214, 214, 245);
+    transition:.4s;
+}
+
+
+
+
+
+
+.card_result { display: flex; justify-content: center; }
+        .loading-container {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            min-height: 150px;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 5px solid #ccc;
+            border-top: 5px solid #000; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-top: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1050;
+        }
+
+
+
+
+
+        .btn_option{
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+
+
+
+
+
+
+
+
+
+
+        .option_cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Stack vertically */
+    text-align: center;     /* Center text inside children */
+    gap: 2rem;              /* Optional spacing between sections */
+    margin-top: 2rem;
+}
+
+.audio_output,
+.link_cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+
+.btn_analyze {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.social_logo {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.btn_analyze {
+    display: flex;
+    justify-content: center;  /* Center the button horizontally */
+    margin-top: 1rem;
+}
+.s_forms form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+}
+
+.red-background {
+    background-color: red !important;
+    color: white;
+}
+
+
+.card_human {
+  display: flex;
+  
+  align-items: center;
+  width: 100%;
+}
+
+.card_ai {
+  display: flex;
+ 
+  align-items: center;
+  
+}
+
+
+
+@media screen and (max-width: 700px){
+    body{
+        width: 100% !important;
+    }
+    #waveform {
+        width: 100%;
+        
+        max-height: 10rem;
+}
+wave {
+  height: 10rem !important;
+}
+.btn_first{
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    bottom: 2rem;
+}
+.trim_input{
+    flex-direction: column;
+}
+
+.start input{
+    width: 7rem;
+}
+.end input{
+    width: 7rem;
+}
+.upload-box {
+    width: 100%;
+    height: 30%;
+    position: relative;
+    bottom: 2rem;
+}
+
+    .card_of_results{
+        flex-direction: column;
+    }
+
+    .btn_option {
+ 
+  gap: .5rem;
+}
+    .card_percentage {
+    width: 100%;
+    min-width: 30%;
+
+    }
+
+    .card.card_metrics {
+    padding: 1rem;
+    width: 100%;
+    height: 25rem;
+}
+
+.btn_analyze {
+ position: relative;
+ bottom: 2rem;
+}
+
+#text_results{
+    padding-left: 0;
+    text-align: center;
+}
+
+.voice_class h1{
+    text-align: center;
+}
+
+.voice_txt{
+    position: relative;
+    top: 1rem;
+}
+.voice_txt h1{
+    font-size: clamp(1.5rem, 2.5vw, 4rem);
+}
+.voice_txt p{
+    padding: .3rem;
+    font-size: clamp(.8rem, 2.5vw, 2rem);
+}
+
+
+#card_of_result{
+    width: 80%;
+    height: 30%;
+    left: -1rem;
+    right: 0;
+    padding: .3rem;
+}
+
+.f1 a{
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+}
+
+
+
+@media screen and (max-width: 400px){
+    body{
+        width: 100% !important;
+    }
+    #waveform {
+        width: 100%;
+        
+        max-height: 10rem;
+}
+wave {
+  height: 10rem !important;
+}
+.btn_first{
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    bottom: 2rem;
+}
+.trim_input{
+    flex-direction: column;
+}
+
+.start input{
+    width: 7rem;
+}
+.end input{
+    width: 7rem;
+}
+.upload-box {
+    width: 100%;
+    height: 30%;
+    position: relative;
+    bottom: 2rem;
+}
+
+    .card_of_results{
+        flex-direction: column;
+    }
+
+    .btn_option {
+ 
+  gap: .5rem;
+}
+    .card_percentage {
+    width: 100%;
+    min-width: 30%;
+
+    }
+
+    .card.card_metrics {
+    padding: 1rem;
+    width: 100%;
+    height: 25rem;
+}
+
+.btn_analyze {
+ position: relative;
+ bottom: 2rem;
+}
+
+#text_results{
+    padding-left: 0;
+    text-align: center;
+}
+
+.voice_class h1{
+    text-align: center;
+}
+
+.voice_txt{
+    position: relative;
+    top: 1rem;
+}
+.voice_txt h1{
+    font-size: clamp(1.5rem, 2.5vw, 4rem);
+}
+.voice_txt p{
+    padding: .3rem;
+    font-size: clamp(.8rem, 2.5vw, 2rem);
+}
+
+
+#card_of_result{
+    width: 80%;
+    height: 30%;
+    left: -1rem;
+    right: 0;
+    padding: .3rem;
+}
+
+.f1 a{
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+}

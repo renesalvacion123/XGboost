@@ -192,3 +192,6 @@ def tiktok_audio_analysis(request):
         'spectrogram_image': spectrogram_image,
         'prediction': label is not None and label not in ["Error", "Error processing audio"]
     })
+
+def about_page(request):
+    return render(request, 'home/faq.html')

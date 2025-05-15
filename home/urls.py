@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.index, name='index'),  # NEW — root route
     path('index.html', views.index),       # optional
     path('tiktok/', views.tiktok_audio_analysis, name='tiktok_audio_analysis'),
+    path('about/', views.about_page, name='about'),
 ]
 
 # Serve static files in development

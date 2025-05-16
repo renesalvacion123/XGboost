@@ -216,6 +216,23 @@
                             <p>{{ confidence }}% confidence level</p>
                         </div>
                     </div>
+                    {% if label == "FAKE" %}
+                <dl class="confidence-explainer">
+                    {% if confidence >= 90 %}
+                        <dt><strong>Confidence Level: 90–100%</strong></dt>
+                        <dd>This voice is very likely AI-generated. Be cautious — it may be used for impersonation, scams or misinformation.</dd>
+                    {% elif confidence >= 70 %}
+                        <dt><strong>Confidence Level: 70–89%</strong></dt>
+                        <dd>This voice likely contains AI-generated elements. Please verify the source before trusting or sharing.</dd>
+                    {% elif confidence >= 50 %}
+                        <dt><strong>Confidence Level: 50–69%</strong></dt>
+                        <dd>The voice may be AI-generated, but confidence is low. Use discretion and check the source if possible.</dd>
+                    {% else %}
+                        <dt><strong>Confidence Level: Below 50%</strong></dt>
+                        <dd>This voice appears to be human. However, always stay alert to possible manipulations or edits.</dd>
+                    {% endif %}
+                </dl>
+                {% endif %}
                     {% elif label == "REAL" %}
                       <div class="card card_human">
                         <div class="icon">
@@ -226,45 +243,30 @@
                             <p>{{ confidence }}% confidence level</p>
                         </div>
                         </div>
-                        {% endif %}
+                        
+                <dl class="confidence-explainer">
+                    {% if confidence >= 90 %}
+  <dt><strong>Confidence Level: 90–100%</strong></dt>
+  <dd>This voice is very likely human. Minimal signs of AI generation detected.</dd>
+{% elif confidence >= 70 %}
+  <dt><strong>Confidence Level: 70–89%</strong></dt>
+  <dd>This voice is likely human. However, a small chance of AI involvement still exists.</dd>
+{% elif confidence >= 50 %}
+  <dt><strong>Confidence Level: 50–69%</strong></dt>
+  <dd>This voice might be human, but confidence is moderate. Consider verifying the source.</dd>
+{% else %}
+  <dt><strong>Confidence Level: Below 50%</strong></dt>
+  <dd>This voice may contain AI-generated elements. Stay cautious and validate authenticity if needed.</dd>
+  {% endif %}
+  {% endif %}
+</dl>
+
+
                 </div>
             
 
             </div>
 
-            <div class="card card_metrics">
-                <h3 style="text-align: center;">Confidence Level</h3>
-                {% if label == "FAKE" %}
-                <dl class="confidence-explainer">
-                    <dt><strong>Confidence Level: 90–100%</strong></dt>
-                    <dd>This voice is very likely AI-generated. Be cautious — it may be used for impersonation, scams or misinformation.</dd>
-
-                    <dt><strong>Confidence Level: 70–89%</strong></dt>
-                    <dd>This voice likely contains AI-generated elements. Please verify the source before trusting or sharing.</dd>
-
-                    <dt><strong>Confidence Level: 50–69%</strong></dt>
-                    <dd>The voice may be AI-generated, but confidence is low. Use discretion and check the source if possible.</dd>
-
-                    <dt><strong>Confidence Level: Below 50%</strong></dt>
-                    <dd>This voice appears to be human. However, always stay alert to possible manipulations or edits.</dd>
-                </dl>
-                {% elif label == "REAL" %}
-                <dl class="confidence-explainer">
-  <dt><strong>Confidence Level: 90–100%</strong></dt>
-  <dd>This voice is very likely human. Minimal signs of AI generation detected.</dd>
-
-  <dt><strong>Confidence Level: 70–89%</strong></dt>
-  <dd>This voice is likely human. However, a small chance of AI involvement still exists.</dd>
-
-  <dt><strong>Confidence Level: 50–69%</strong></dt>
-  <dd>This voice might be human, but confidence is moderate. Consider verifying the source.</dd>
-
-  <dt><strong>Confidence Level: Below 50%</strong></dt>
-  <dd>This voice may contain AI-generated elements. Stay cautious and validate authenticity if needed.</dd>
-</dl>
-
-{% endif %}
-            </div>
         </div>
 
         

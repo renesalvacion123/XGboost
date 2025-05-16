@@ -11,49 +11,62 @@ import subprocess
 
 matplotlib.use('Agg')  # Use safe backend for plotting
 
+
+# ----------------------------- Feature Set -----------------------------
+selected_features = [
+    "rms_min", "rms_max", "rms_mean", "rms_std",
+    "zcr_mean", "zcr_max", "zcr_min",
+    "centroid_min", "centroid_mean",
+    "rolloff_min", "bandwidth_min",
+    "mfcc2_mean", "mfcc3_mean", "mfcc1_mean",
+    "pitch_changes"
+]
+
+
+
 def is_valid_audio_format(filename):
     valid_formats = ['.wav', '.mp3', '.flac']
     return any(filename.lower().endswith(ext) for ext in valid_formats)
 
-def preprocess_audio(audio_path, sr=16000):
-    y, sr = librosa.load(audio_path, sr=sr, mono=True)
-    y, _ = librosa.effects.trim(y)
-    y = librosa.util.normalize(y)
-    return y, sr
+def preprocess_audio(audio_path, target_sr=22050):
+    y, sr = librosa.load(audio_path, sr=None, mono=False)
+    if y.ndim == 2:
+        y = np.mean(y, axis=0)
+    y = librosa.resample(y, orig_sr=sr, target_sr=target_sr)
+    y = y / np.max(np.abs(y)) if np.max(np.abs(y)) != 0 else y
+    return y, target_sr
 
-def extract_features(audio_path):
-    y, sr = preprocess_audio(audio_path)
-    features = []
+# ----------------------------- Feature Extraction -----------------------------
+def extract_features(audio_path, sr=22050):
+    y, sr = preprocess_audio(audio_path, target_sr=sr)
+    zcr = librosa.feature.zero_crossing_rate(y)[0]
+    centroid = librosa.feature.spectral_centroid(y=y, sr=sr)[0]
+    rms = librosa.feature.rms(y=y)[0]
+    rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)[0]
+    bandwidth = librosa.feature.spectral_bandwidth(y=y, sr=sr)[0]
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+    pitches, _ = librosa.piptrack(y=y, sr=sr)
+    pitch_changes = np.count_nonzero(np.diff(np.argmax(pitches, axis=0)))
 
-    # Root Mean Square Energy (RMS)
-    rms = librosa.feature.rms(y=y)
-    features += [np.min(rms), np.max(rms), np.mean(rms), np.std(rms)]
+    feature_vector = {
+        "rms_min": np.min(rms),
+        "rms_max": np.max(rms),
+        "rms_mean": np.mean(rms),
+        "rms_std": np.std(rms),
+        "zcr_mean": np.mean(zcr),
+        "zcr_max": np.max(zcr),
+        "zcr_min": np.min(zcr),
+        "centroid_min": np.min(centroid),
+        "centroid_mean": np.mean(centroid),
+        "rolloff_min": np.min(rolloff),
+        "bandwidth_min": np.min(bandwidth),
+        "mfcc1_mean": np.mean(mfcc[0]),
+        "mfcc2_mean": np.mean(mfcc[1]),
+        "mfcc3_mean": np.mean(mfcc[2]),
+        "pitch_changes": pitch_changes
+    }
 
-    # Zero-Crossing Rate (ZCR)
-    zcr = librosa.feature.zero_crossing_rate(y)
-    features += [np.mean(zcr), np.max(zcr), np.min(zcr)]
-
-    # Spectral Centroid
-    centroid = librosa.feature.spectral_centroid(y=y, sr=sr)
-    features += [np.min(centroid), np.mean(centroid)]
-
-    # Spectral Rolloff
-    rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)
-    features.append(np.min(rolloff))
-
-    # Spectral Bandwidth
-    bandwidth = librosa.feature.spectral_bandwidth(y=y, sr=sr)
-    features.append(np.min(bandwidth))
-
-    # MFCCs (first 3)
-    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=3)
-    features += [np.mean(mfccs[i]) for i in range(3)]
-
-    # Pitch-related (example: tempogram std as a proxy)
-    pitch_changes = np.std(librosa.feature.tempogram(y=y))
-    features.append(pitch_changes)
-
-    return features
+    return [feature_vector[feat] for feat in selected_features]
 
 def classify_voice(audio_path, model):
     try:
@@ -86,7 +99,7 @@ def save_spectrogram(audio_path, spectrogram_path):
 
     os.makedirs(os.path.dirname(spectrogram_path), exist_ok=True)
     plt.savefig(spectrogram_path)
-    plt.close('all')
+    plt.close()
 
     print("Saved spectrogram to:", spectrogram_path)
 

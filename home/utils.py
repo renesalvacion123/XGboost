@@ -14,31 +14,33 @@ matplotlib.use('Agg')  # Use safe backend for plotting
 
 # ----------------------------- Feature Set -----------------------------
 selected_features = [
-    "rms_min", "rms_max", "rms_mean", "rms_std",
-    "zcr_mean", "zcr_max", "zcr_min",
-    "centroid_min", "centroid_mean",
-    "rolloff_min", "bandwidth_min",
-    "mfcc2_mean", "mfcc3_mean", "mfcc1_mean",
-    "pitch_changes"
+"centroid_min",
+"bandwidth_min",
+"rolloff_min",
+"centroid_mean",
+"zcr_mean",
+"mfcc2_mean",
+
+
 ]
-
-
 
 def is_valid_audio_format(filename):
     valid_formats = ['.wav', '.mp3', '.flac']
     return any(filename.lower().endswith(ext) for ext in valid_formats)
 
-def preprocess_audio(audio_path, target_sr=22050):
-    y, sr = librosa.load(audio_path, sr=None, mono=False)
+def preprocess_audio(audio_path, target_sr=22050, max_duration=120):
+    y, sr = librosa.load(audio_path, sr=None, mono=False, duration=max_duration)
     if y.ndim == 2:
         y = np.mean(y, axis=0)
     y = librosa.resample(y, orig_sr=sr, target_sr=target_sr)
     y = y / np.max(np.abs(y)) if np.max(np.abs(y)) != 0 else y
     return y, target_sr
 
+
 # ----------------------------- Feature Extraction -----------------------------
 def extract_features(audio_path, sr=22050):
     y, sr = preprocess_audio(audio_path, target_sr=sr)
+# Basic feature extraction
     zcr = librosa.feature.zero_crossing_rate(y)[0]
     centroid = librosa.feature.spectral_centroid(y=y, sr=sr)[0]
     rms = librosa.feature.rms(y=y)[0]
@@ -48,23 +50,31 @@ def extract_features(audio_path, sr=22050):
     pitches, _ = librosa.piptrack(y=y, sr=sr)
     pitch_changes = np.count_nonzero(np.diff(np.argmax(pitches, axis=0)))
 
+    # Construct feature vector dictionary
     feature_vector = {
-        "rms_min": np.min(rms),
-        "rms_max": np.max(rms),
-        "rms_mean": np.mean(rms),
-        "rms_std": np.std(rms),
+
+
+        # ZCR features
         "zcr_mean": np.mean(zcr),
-        "zcr_max": np.max(zcr),
-        "zcr_min": np.min(zcr),
+
+
+        # Spectral centroid
         "centroid_min": np.min(centroid),
         "centroid_mean": np.mean(centroid),
+
+        # Rolloff
         "rolloff_min": np.min(rolloff),
+
+        # Bandwidth
         "bandwidth_min": np.min(bandwidth),
-        "mfcc1_mean": np.mean(mfcc[0]),
+
+        # MFCCs
         "mfcc2_mean": np.mean(mfcc[1]),
-        "mfcc3_mean": np.mean(mfcc[2]),
-        "pitch_changes": pitch_changes
+
+
+
     }
+
 
     return [feature_vector[feat] for feat in selected_features]
 
@@ -88,13 +98,24 @@ def classify_voice(audio_path, model):
     return ("Low confidence", confidence) if confidence < 60 else (label, confidence)
 
 def save_spectrogram(audio_path, spectrogram_path):
-    y, sr = librosa.load(audio_path, sr=16000)
-    S = np.abs(librosa.stft(y))
-    D = librosa.amplitude_to_db(S, ref=np.max)
+    y, sr = librosa.load(audio_path, sr=22050)
 
-    plt.figure(figsize=(10, 4))
-    librosa.display.specshow(D, sr=sr, x_axis='time', y_axis='log')
+    # Generate Mel spectrogram in decibels
+    S = librosa.feature.melspectrogram(
+    y=y, sr=sr, n_fft=1024, hop_length=1024, n_mels=64  # lighter
+)
+
+    S_dB = librosa.power_to_db(S, ref=np.max)
+
+    # Plot spectrogram
+    plt.figure(figsize=(8, 4))
+    librosa.display.specshow(S_dB, sr=sr, x_axis='time', y_axis='mel', cmap='magma')
     plt.colorbar(format='%+2.0f dB')
+
+    plt.xticks(fontsize=8)
+    plt.yticks(fontsize=8)
+    plt.xlabel("Time")
+    plt.ylabel("Frequency (Mel)")
     plt.tight_layout()
 
     os.makedirs(os.path.dirname(spectrogram_path), exist_ok=True)
@@ -166,7 +187,7 @@ def extract_audio_with_ffmpeg(video_path, output_audio_path='output.wav'):
         '-i', video_path,  # Input video path
         '-vn',  # No video output
         '-acodec', 'pcm_s16le',  # Audio codec (WAV)
-        '-ar', '22000',  # Set sample rate
+        '-ar', '22050',  # Set sample rate
         '-ac', '1',  # Mono audio (adjust if stereo is needed)
         output_audio_path  # Output path for the audio
     ]
@@ -216,7 +237,7 @@ def tiktok_to_wav(url):
 
         try:
             # Step 4: Process the audio using librosa
-            y, sr = librosa.load(wav_file, sr=16000)
+            y, sr = librosa.load(wav_file, sr=22050)
             duration = librosa.get_duration(y=y, sr=sr)
             print(f"Audio duration: {duration} seconds")
 

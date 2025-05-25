@@ -12,7 +12,7 @@ MAX_AUDIO_DURATION = 120  # 2 minutes
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
-MODEL_PATH = os.path.join(PROJECT_ROOT, 'FINAL_XGB_MODEL.joblib')
+MODEL_PATH = os.path.join(PROJECT_ROOT, 'XGB_DETECTION_model.joblib')
 
 # Load the model once globally
 try:
@@ -58,7 +58,7 @@ def index(request):
 
             # Load and trim if needed
             print_memory_usage("Before loading audio")
-            y, sr = librosa.load(full_file_path, sr=16000)
+            y, sr = librosa.load(full_file_path, sr=22050)
             print_memory_usage("After loading audio")
             print(f"Audio loaded: {y.shape}, Sample rate: {sr}")
             duration = librosa.get_duration(y=y, sr=sr)
@@ -91,17 +91,26 @@ def index(request):
             # After saving spectrogram
             print_memory_usage("After spectrogram generation")
 
-            # Classify using model
+            CONFIDENCE_THRESHOLD = 0.69  # or 69 depending on your confidence scale
+
             if model:
                 label, confidence = utils.classify_voice(trimmed_audio_path, model)
-                print(f"Label: {label}, Confidence: {confidence}")
+                print(f"Raw model output - Label: {label}, Confidence: {confidence}")
 
-                if label == 1:
-                    label = "FAKE"
-                elif label == 0:
-                    label = "REAL"
-                else:
+                try:
+                    if confidence < CONFIDENCE_THRESHOLD:
+                        label = "Unknown"  # Abstain
+                    else:
+                        if str(label).isdigit():
+                            label = int(label)
+                            label = "FAKE" if label == 1 else "REAL"
+                        else:
+                            label = "Unknown"
+                except Exception as e:
+                    print(f"Error processing label: {e}")
                     label = "Unknown"
+
+
             else:
                 label = "Error"
                 confidence = 0
@@ -138,7 +147,7 @@ def tiktok_audio_analysis(request):
                 try:
                     print(f"Audio file {wav_file} exists and is valid.")
 
-                    y, sr = librosa.load(wav_file, sr=16000, mono=True)
+                    y, sr = librosa.load(wav_file, sr=22050, mono=True)
                     print(f"Audio loaded: {y.shape}, Sample rate: {sr}")
                     duration = librosa.get_duration(y=y, sr=sr)
                     print(f"Audio duration: {duration} seconds")

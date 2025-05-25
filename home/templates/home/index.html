@@ -258,6 +258,23 @@
   <dt><strong>Confidence Level: Below 50%</strong></dt>
   <dd>This voice may contain AI-generated elements. Stay cautious and validate authenticity if needed.</dd>
   {% endif %}
+  {% elif label == "Unknown" %}
+    <div class="card card_unknown">
+        <div class="icon">
+            <span class="material-symbols-outlined">help_outline</span>
+        </div>
+        <div class="text_confi">
+            <h5>Unable to Confidently Classify Voice</h5>
+            <p>Confidence too low ({{ confidence }}%) to make a reliable prediction.</p>
+        </div>
+    </div>
+    <dl class="confidence-explainer">
+        <dt><strong>Low Confidence</strong></dt>
+        <dd>The system cannot confidently determine whether the voice is AI-generated or human. Please verify manually if needed.</dd>
+    </dl>
+
+{% else %}
+    <p>No valid classification available.</p>
   {% endif %}
 </dl>
 
